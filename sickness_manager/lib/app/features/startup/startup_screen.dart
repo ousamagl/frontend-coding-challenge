@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sickness_manager/app/features/startup/view_model/startup_view_model.dart';
 
 class StartupScreen extends StatefulWidget {
-  const StartupScreen({super.key, required this.viewModel});
+  const StartupScreen({required this.viewModel, super.key});
 
   final StartupViewModel viewModel;
 

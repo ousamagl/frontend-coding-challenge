@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sickness_manager/app/features/login/view_model/login_view_model.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key, required this.viewModel});
+  const LoginScreen({required this.viewModel, super.key});
 
   final LoginViewModel viewModel;
 
