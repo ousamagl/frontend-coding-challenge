@@ -20,7 +20,15 @@ class StartupViewModel implements BaseViewModel<StartupState> {
   ValueListenable<StartupState> get state => _state;
 
   @override
-  void init() {}
+  void init() {
+    checkForLoggedInUser();
+  }
+
+  Future<void> checkForLoggedInUser() async {
+    _emit(execution: const Executing());
+    await Future.delayed(const Duration(seconds: 2));
+    _output.goToAbsences();
+  }
 
   void _emit({Execution? execution}) =>
       _state.value = _state.value.copyWith(execution: execution);

@@ -10,36 +10,48 @@ class AbsencesModule extends ConsumerStatefulWidget {
   const AbsencesModule({super.key});
 
   @override
-  AbsencesModuleState createState() => AbsencesModuleState();
+  LoginModuleState createState() => LoginModuleState();
 }
 
-class AbsencesModuleState extends ConsumerState<AbsencesModule> {
-  late final _viewModel = ref.read(absencesViewModelProvider);
-  late final GoRouter _router = GoRouter(
+class LoginModuleState extends ConsumerState<AbsencesModule> {
+  late final _viewModel = ref.read(absencesViewModelProvider)..init();
+
+  late final _localRouter = GoRouter(
+    initialLocation: '/absences',
     routes: [
       GoRoute(
-        name: 'absences-list',
-        path: '/list',
-        builder: (context, state) => AbsencesScreen(viewModel: _viewModel),
+        path: '/absences',
+        builder: (_, __) => AbsencesScreen(viewModel: _viewModel),
       ),
       GoRoute(
-        name: 'absence-detail',
-        path: '/detail/:id',
-        builder: (context, state) {
+        name: 'absence-details',
+        path: '/details/:id',
+        builder: (_, state) {
+          final id = state.pathParameters['id']!;
           return AbsenceDetailsScreen(viewModel: _viewModel);
         },
       ),
       GoRoute(
-        name: 'absences-filters',
-        path: '/filters',
-        builder:
-            (context, state) => AbsencesFilterScreen(viewModel: _viewModel),
+        name: 'absence-filters',
+        path: '/absences/filters',
+        builder: (_, __) => AbsencesFilterScreen(viewModel: _viewModel),
       ),
     ],
   );
 
   @override
   Widget build(BuildContext context) {
-    return Router(routerDelegate: _router.routerDelegate);
+    return Router(
+      routerDelegate: _localRouter.routerDelegate,
+      routeInformationParser: _localRouter.routeInformationParser,
+      routeInformationProvider: _localRouter.routeInformationProvider,
+      backButtonDispatcher: _localRouter.backButtonDispatcher,
+    );
+  }
+
+  @override
+  void dispose() {
+    _viewModel.clear();
+    super.dispose();
   }
 }

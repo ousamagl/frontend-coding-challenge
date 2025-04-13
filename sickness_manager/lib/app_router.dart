@@ -1,14 +1,20 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sickness_manager/app/features/absences/view_model/absences_output.dart';
 import 'package:sickness_manager/app/features/login/view_model/login_output.dart';
 import 'package:sickness_manager/app/features/startup/view_model/startup_output.dart';
 import 'package:sickness_manager/modules/absences_module.dart';
 import 'package:sickness_manager/modules/login_module.dart';
 import 'package:sickness_manager/modules/startup_module.dart';
 
-class AppRouter implements StartupOutput, LoginOutput {
+class AppRouter implements StartupOutput, LoginOutput, AbsencesOutput {
+  AppRouter(this.ref);
+
+  final Ref ref;
+
   late final router = GoRouter(
     observers: [CustomNavigatorObserver()],
 
@@ -20,14 +26,14 @@ class AppRouter implements StartupOutput, LoginOutput {
       ),
       GoRoute(
         name: 'login',
-        path: '/',
+        path: '/login',
         builder: (context, state) => LoginModule(),
       ),
       GoRoute(
-        name: 'absences',
-        path: '/',
-        builder: (context, state) => AbsencesModule(),
-        
+        path: '/absences',
+        builder: (context, state) {
+          return const AbsencesModule();
+        },
       ),
     ],
   );

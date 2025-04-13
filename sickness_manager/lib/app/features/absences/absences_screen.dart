@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sickness_manager/app/features/absences/view_model/absences_state.dart';
 import 'package:sickness_manager/app/features/absences/view_model/absences_view_model.dart';
 
@@ -19,12 +20,10 @@ class _AbsencesScreenState extends State<AbsencesScreen> {
   @override
   void initState() {
     super.initState();
-    _viewModel.init();
   }
 
   @override
   void dispose() {
-    _viewModel.clear();
     super.dispose();
   }
 
@@ -34,7 +33,12 @@ class _AbsencesScreenState extends State<AbsencesScreen> {
       valueListenable: _viewModel.state,
       builder: (context, state, child) {
         return Scaffold(
-          appBar: AppBar(title: const Text('Absences')),
+          appBar: AppBar(
+            title: GestureDetector(
+              onTap: () => context.pushNamed('absence-filters'),
+              child: const Text('Absences'),
+            ),
+          ),
           body: Center(child: Text('Absences Screen')),
         );
       },
