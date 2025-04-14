@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sickness_manager/app/features/startup/view_model/startup_state.dart';
 import 'package:sickness_manager/app/features/startup/view_model/startup_view_model.dart';
+import 'package:sickness_manager/app/presentation/components/loading.dart';
+import 'package:sickness_manager/app/presentation/presentation.dart';
 
 class StartupScreen extends StatefulWidget {
   const StartupScreen({required this.viewModel, super.key});
@@ -34,8 +36,28 @@ class _StartupScreenState extends State<StartupScreen> {
       valueListenable: _viewModel.state,
       builder: (context, state, child) {
         return Scaffold(
-          appBar: AppBar(title: const Text('Startup')),
-          body: Center(child: Text('startup screen')),
+          backgroundColor: AppColors.primary,
+          extendBody: true,
+          body: SafeArea(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Absence Manager',
+                    style: TextStyles.title.copyWith(color: AppColors.white),
+                  ),
+                  xlSpacer(),
+                  defaultLoader(),
+                ],
+              ),
+            ),
+          ),
+          bottomNavigationBar: Container(
+            height: Dimensions.sm,
+            margin: EdgeInsets.only(bottom: Dimensions.lg),
+            child: Image.asset(Assets.logo),
+          ),
         );
       },
     );
