@@ -92,7 +92,7 @@ async def get_absences(skip: int = 0, limit: int = 10, current_user: str = Depen
     return absences[skip: skip + limit]
 
 @app.get("/total-absences")
-async def get_total_absences():
+async def get_total_absences(current_user: str = Depends(get_current_user)):
     try:
         absences = load_json("absences.json")
         
