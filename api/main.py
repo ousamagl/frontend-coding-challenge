@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Header, Depends
+from fastapi import FastAPI, HTTPException, Header, Depends, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import json
@@ -59,6 +59,7 @@ class Absence(BaseModel):
     rejectedAt: Optional[datetime] = None
     memberNote: Optional[str] = None
     type: Optional[str] = None
+    status: Optional[str] = None
 
 class Member(BaseModel):
     crewId: int
@@ -86,10 +87,66 @@ async def login(request: LoginRequest):
     
     return {"access_token": token}
 
+def get_status(absence: dict) -> str:
+    confirmed_at = absence.get('confirmedAt')
+    rejected_at = absence.get('rejectedAt')
+    
+    if confirmed_at and rejected_at:
+        return None 
+    elif confirmed_at:
+        return "confirmed"
+    elif rejected_at:
+        return "rejected"
+    else:
+        return "requested"
+
 @app.get("/absences", response_model=List[Absence])
-async def get_absences(skip: int = 0, limit: int = 10, current_user: str = Depends(get_current_user)):
+async def get_absences(
+    skip: int = 0,
+    limit: int = 10,
+    current_user: str = Depends(get_current_user),
+    type: Optional[str] = Query(None), 
+    status: Optional[str] = Query(None),
+    crew_id: Optional[int] = Query(None),
+    user_id: Optional[int] = Query(None),
+    start_date: Optional[datetime] = Query(None),
+    end_date: Optional[datetime] = Query(None)
+):
     absences = load_json("absences.json")
-    return absences[skip: skip + limit]
+
+    filtered_absences = absences
+
+    if type:
+        filtered_absences = [
+            absence for absence in filtered_absences if absence.get('type') == type
+        ]
+    
+    if status:
+        filtered_absences = [
+            absence for absence in filtered_absences if get_status(absence) == status
+        ]
+    
+    if crew_id:
+        filtered_absences = [
+            absence for absence in filtered_absences if absence.get('crewId') == crew_id
+        ]
+    
+    if user_id:
+        filtered_absences = [
+            absence for absence in filtered_absences if absence.get('userId') == user_id
+        ]
+    
+    if start_date:
+        filtered_absences = [
+            absence for absence in filtered_absences if absence.get('startDate') >= start_date
+        ]
+    
+    if end_date:
+        filtered_absences = [
+            absence for absence in filtered_absences if absence.get('endDate') <= end_date
+        ]
+    
+    return filtered_absences[skip: skip + limit]
 
 @app.get("/total-absences")
 async def get_total_absences(current_user: str = Depends(get_current_user)):
