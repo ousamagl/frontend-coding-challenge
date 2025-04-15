@@ -3,13 +3,15 @@ import 'package:sickness_manager/app/core/common/types/base_view_model.dart';
 import 'package:sickness_manager/app/core/common/types/execution.dart';
 import 'package:sickness_manager/app/domain/models/absence.dart';
 import 'package:sickness_manager/app/domain/repositories/absences_repo.dart';
+import 'package:sickness_manager/app/domain/repositories/user_repo.dart';
 import 'package:sickness_manager/app/features/absences/view_model/absences_output.dart';
 import 'package:sickness_manager/app/features/absences/view_model/absences_state.dart';
 
 class AbsencesViewModel implements BaseViewModel<AbsencesState> {
   AbsencesViewModel(
     this._output,
-    this._absencesRepo, {
+    this._absencesRepo,
+    this._userRepo, {
     AbsencesState? initialState,
   }) : _state = ValueNotifier<AbsencesState>(
          initialState ?? const AbsencesState(),
@@ -17,6 +19,7 @@ class AbsencesViewModel implements BaseViewModel<AbsencesState> {
 
   final AbsencesOutput _output;
   final AbsencesRepo _absencesRepo;
+  final UserRepo _userRepo;
 
   final ValueNotifier<AbsencesState> _state;
 
@@ -44,6 +47,14 @@ class AbsencesViewModel implements BaseViewModel<AbsencesState> {
         dummyAbsence,
       ],
     );
+  }
+
+  Future<void> logout() async {
+    final result = await _userRepo.logout();
+
+    if (result) {
+      _output.goToLogin();
+    }
   }
 
   void _emit({Execution? execution, List<Absence>? absences}) =>

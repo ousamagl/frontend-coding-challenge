@@ -64,10 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
             smSpacer(),
             Divider(endIndent: Dimensions.md, indent: Dimensions.md),
             smSpacer(),
-            Padding(
-              padding: Paddings.horizontalMd,
-              child: primaryFilledButton('Admin Login', onPressed: () {}),
-            ),
+            _loginButton(),
           ],
         ),
       ),
@@ -103,7 +100,8 @@ class _LoginScreenState extends State<LoginScreen> {
       controller: _emailController,
       focusNode: _emailFocusNode,
       keyboardType: TextInputType.emailAddress,
-      onSubmitted: (value) {},
+      onChanged: (email) => _viewModel.onEmailChanged(email),
+      errorText: _state.emailError.isEmpty ? null : _state.emailError,
     ),
     smSpacer(),
     CustomTextField(
@@ -111,7 +109,25 @@ class _LoginScreenState extends State<LoginScreen> {
       controller: _passwordController,
       focusNode: _passwordFocusNode,
       obscureText: true,
-      onSubmitted: (value) {},
+      onChanged: (password) => _viewModel.onPasswordChanged(password),
+      errorText: _state.passwordError.isEmpty ? null : _state.passwordError,
     ),
   ];
+
+  Widget _loginButton() => Padding(
+    padding: Paddings.horizontalMd,
+    child: primaryFilledButton(
+      'Admin Login',
+      isLoading: _state.execution.isExecuting,
+      onPressed:
+          _state.passwordError.isEmpty && _state.emailError.isEmpty
+              ? () {
+                _viewModel.login(
+                  email: _emailController.text,
+                  password: _passwordController.text,
+                );
+              }
+              : null,
+    ),
+  );
 }

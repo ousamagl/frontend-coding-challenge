@@ -3,19 +3,22 @@ import 'package:sickness_manager/app/presentation/presentation.dart';
 
 class CustomTextField extends StatefulWidget {
   const CustomTextField({
-    super.key,
     required this.labelText,
+    super.key,
     this.errorText,
     this.controller,
     this.focusNode,
     this.keyboardType,
     this.onSubmitted,
+    this.onChanged,
+
     this.obscureText = false,
   });
 
   final String labelText;
   final String? errorText;
   final Function(String)? onSubmitted;
+  final Function(String?)? onChanged;
   final bool obscureText;
   final TextEditingController? controller;
   final FocusNode? focusNode;
@@ -48,8 +51,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
         controller: widget.controller,
         focusNode: widget.focusNode,
         onSubmitted: widget.onSubmitted,
+        onChanged: widget.onChanged,
         obscureText: _obscureText,
         keyboardType: widget.keyboardType,
+
         cursorColor: AppColors.black,
         decoration: InputDecoration(
           labelText: widget.labelText,
@@ -58,6 +63,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
           errorStyle: TextStyles.footnote.copyWith(color: AppColors.orange),
 
           focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: AppColors.white),
+            borderRadius: BorderRadius.circular(Dimensions.xs),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
             borderSide: BorderSide(color: AppColors.white),
             borderRadius: BorderRadius.circular(Dimensions.xs),
           ),

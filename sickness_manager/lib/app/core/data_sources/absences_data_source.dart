@@ -1,5 +1,6 @@
 import 'package:sickness_manager/app/domain/data_sources/absences_data_source.dart';
 import 'package:sickness_manager/app/domain/models/absence.dart';
+import 'package:sickness_manager/app/domain/models/member.dart';
 
 class AbsencesDataSourceImpl implements AbsencesDataSource {
   @override
@@ -8,7 +9,7 @@ class AbsencesDataSourceImpl implements AbsencesDataSource {
   }
 
   @override
-  Future<bool> updateAbsence({required String absenceId}) async {
-    return true;
+  Future<List<Member?>> getMembers() async {
+    return [];
   }
 }

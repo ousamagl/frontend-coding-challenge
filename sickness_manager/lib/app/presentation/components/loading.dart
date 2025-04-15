@@ -14,3 +14,16 @@ Widget defaultLoader() => SizedBox(
     pathBackgroundColor: Colors.transparent,
   ),
 );
+
+Widget inlineLoader() => SizedBox(
+  height: Dimensions.md,
+
+  child: LoadingIndicator(
+    indicatorType: Indicator.lineScale,
+
+    colors: const [AppColors.black],
+    strokeWidth: 2,
+    backgroundColor: Colors.transparent,
+    pathBackgroundColor: Colors.transparent,
+  ),
+);

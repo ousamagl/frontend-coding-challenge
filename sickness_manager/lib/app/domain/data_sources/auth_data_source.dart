@@ -1,9 +1,8 @@
-import 'package:sickness_manager/app/domain/models/user.dart';
+import 'package:sickness_manager/app/core/common/types/result.dart';
 
 abstract interface class AuthDataSource {
-  Future<User?> login({required String username, required String password});
-
-  Future<bool> logout();
-
-  Stream<User?> currentUserStream();
+  Future<Result<String?>> login({
+    required String username,
+    required String password,
+  });
 }

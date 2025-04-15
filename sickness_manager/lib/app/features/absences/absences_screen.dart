@@ -76,13 +76,11 @@ class _AbsencesScreenState extends State<AbsencesScreen> {
     actions: [
       IconButton(
         icon: const FaIcon(FontAwesomeIcons.filter, color: AppColors.white),
-        onPressed: () {
-          context.pushNamed('absence-filters');
-        },
+        onPressed: () => context.pushNamed('absence-filters'),
       ),
       IconButton(
         icon: const FaIcon(FontAwesomeIcons.userGear, color: AppColors.white),
-        onPressed: () {},
+        onPressed: () => _viewModel.logout(),
       ),
     ],
     floating: true,
