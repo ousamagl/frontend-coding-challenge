@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Header, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import json
 from typing import List, Optional
@@ -10,6 +11,14 @@ import os
 app = FastAPI()
 
 SECRET_KEY = "crewmeister"
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def load_json(file_name: str):
     file_path = os.path.join(os.path.dirname(__file__), 'json_files', file_name)
