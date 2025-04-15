@@ -91,6 +91,22 @@ async def get_absences(skip: int = 0, limit: int = 10, current_user: str = Depen
     absences = load_json("absences.json")
     return absences[skip: skip + limit]
 
+@app.get("/total-absences")
+async def get_total_absences():
+    try:
+        absences = load_json("absences.json")
+        
+        total_absences = len(absences)
+        
+        return {"total_absences": total_absences}
+    
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="Error decoding absences.json file")
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {e}")
+
+
 @app.get("/members", response_model=List[Member])
 async def get_members(current_user: str = Depends(get_current_user)):
     members = load_json("members.json")
