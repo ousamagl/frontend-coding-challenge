@@ -1,0 +1,10 @@
+# Flutter
+.dart_tool/
+.idea/
+.vscode/
+build/
+ios/
+android/
+*.iml
+.packages
+pubspec.lock
