@@ -28,7 +28,10 @@ class LoginModuleState extends ConsumerState<AbsencesModule> {
         path: '/details/:id',
         builder: (_, state) {
           final id = state.pathParameters['id']!;
-          return AbsenceDetailsScreen(viewModel: _viewModel);
+          return AbsenceDetailsScreen(
+            viewModel: _viewModel,
+            absenceId: int.tryParse(id),
+          );
         },
       ),
       GoRoute(
