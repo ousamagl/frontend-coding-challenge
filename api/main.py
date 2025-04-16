@@ -3,7 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import json
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, date
+
 from jose import JWTError, jwt
 from datetime import timedelta
 import os
@@ -109,8 +110,8 @@ async def get_absences(
     status: Optional[str] = Query(None),
     crew_id: Optional[int] = Query(None),
     user_id: Optional[int] = Query(None),
-    start_date: Optional[datetime] = Query(None),
-    end_date: Optional[datetime] = Query(None)
+    start_date: Optional[date] = Query(None),
+    end_date: Optional[date] = Query(None)
 ):
     absences = load_json("absences.json")
 
@@ -136,14 +137,20 @@ async def get_absences(
             absence for absence in filtered_absences if absence.get('userId') == user_id
         ]
     
-    if start_date:
+    if start_date and end_date:
         filtered_absences = [
-            absence for absence in filtered_absences if absence.get('startDate') >= start_date
+            absence for absence in filtered_absences
+            if date.fromisoformat(absence.get('startDate')) >= start_date and date.fromisoformat(absence.get('endDate')) <= end_date
         ]
-    
-    if end_date:
+    elif start_date:
         filtered_absences = [
-            absence for absence in filtered_absences if absence.get('endDate') <= end_date
+            absence for absence in filtered_absences
+            if date.fromisoformat(absence.get('startDate')) == start_date
+        ]
+    elif end_date:
+        filtered_absences = [
+            absence for absence in filtered_absences
+            if date.fromisoformat(absence.get('endDate')) == end_date
         ]
     
     return filtered_absences[skip: skip + limit]
