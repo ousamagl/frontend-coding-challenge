@@ -86,8 +86,8 @@ class _AbsenceDetailsScreenState extends State<AbsenceDetailsScreen> {
     titleSpacing: Dimensions.xs,
     actions: [
       IconButton(
-        icon: const FaIcon(FontAwesomeIcons.userGear, color: AppColors.white),
-        onPressed: () {},
+        icon: const FaIcon(FontAwesomeIcons.userSlash, color: AppColors.white),
+        onPressed: () => _viewModel.logout(),
       ),
     ],
   );

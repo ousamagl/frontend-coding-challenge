@@ -46,7 +46,12 @@ class _AbsencesScreenState extends State<AbsencesScreen> {
             bottom: false,
             child: Scaffold(
               backgroundColor: AppColors.secondary,
-              body: CustomScrollView(slivers: [_appBar(), ..._absencesList()]),
+              body:
+                  _state.execution.isFailed
+                      ? _errorWidget()
+                      : CustomScrollView(
+                        slivers: [_appBar(), ..._absencesList()],
+                      ),
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.centerFloat,
               floatingActionButton: _bottomBar(),
@@ -67,11 +72,25 @@ class _AbsencesScreenState extends State<AbsencesScreen> {
     surfaceTintColor: AppColors.primary,
     actions: [
       IconButton(
-        icon: const FaIcon(FontAwesomeIcons.filter, color: AppColors.white),
+        icon: Stack(
+          children: [
+            const FaIcon(FontAwesomeIcons.filter, color: AppColors.white),
+            if (_state.memberIdFilter != -1 ||
+                _state.crewIdFilter != -1 ||
+                _state.startDateFilter != null ||
+                _state.endDateFilter != null ||
+                _state.typeFilter != AbsenceType.none ||
+                _state.statusFilter != AbsenceStatus.none)
+              Positioned(
+                right: 0,
+                child: CircleAvatar(radius: 5, backgroundColor: AppColors.red),
+              ),
+          ],
+        ),
         onPressed: () => context.pushNamed('absence-filters'),
       ),
       IconButton(
-        icon: const FaIcon(FontAwesomeIcons.userGear, color: AppColors.white),
+        icon: const FaIcon(FontAwesomeIcons.userSlash, color: AppColors.white),
         onPressed: () => _viewModel.logout(),
       ),
     ],
@@ -80,16 +99,18 @@ class _AbsencesScreenState extends State<AbsencesScreen> {
 
   List<Widget> _absencesList() => [
     SliverToBoxAdapter(child: smSpacer()),
-    SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) =>
-            _state.execution.isExecuting
-                ? cardLoader()
-                : _absenceItem(_state.currentPage[index]),
-        childCount:
-            _state.execution.isExecuting ? 10 : _state.currentPage.length,
-      ),
-    ),
+    _state.currentPage.isEmpty
+        ? SliverToBoxAdapter(child: _emptyWidget())
+        : SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, index) =>
+                _state.execution.isExecuting
+                    ? cardLoader()
+                    : _absenceItem(_state.currentPage[index]),
+            childCount:
+                _state.execution.isExecuting ? 10 : _state.currentPage.length,
+          ),
+        ),
     SliverToBoxAdapter(child: xxxlSpacer()),
   ];
 
@@ -249,5 +270,36 @@ class _AbsencesScreenState extends State<AbsencesScreen> {
         onDoubleTap: () {},
       ),
     ],
+  );
+
+  Widget _errorWidget() => Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          FontAwesomeIcons.triangleExclamation,
+          size: Dimensions.xl,
+          color: AppColors.orange,
+        ),
+        xsSpacer(),
+        Text('Something Went Wrong', style: TextStyles.body),
+      ],
+    ),
+  );
+
+  Widget _emptyWidget() => SizedBox(
+    height: MediaQuery.of(context).size.height * 0.7,
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          FontAwesomeIcons.magnifyingGlass,
+          size: Dimensions.xl,
+          color: AppColors.orange,
+        ),
+        xsSpacer(),
+        Text('No Absences Found', style: TextStyles.body),
+      ],
+    ),
   );
 }
