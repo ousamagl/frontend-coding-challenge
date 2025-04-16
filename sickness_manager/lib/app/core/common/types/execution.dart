@@ -1,4 +1,6 @@
-abstract class Execution {
+import 'package:equatable/equatable.dart';
+
+abstract class Execution extends Equatable {
   const Execution();
 
   bool get isIdle => this is Idle;
@@ -26,6 +28,9 @@ abstract class Execution {
       return succeeded();
     }
   }
+
+  @override
+  List<Object?> get props => [];
 }
 
 final class Idle extends Execution {
@@ -40,16 +45,6 @@ final class Failed extends Execution {
   const Failed([this.error]);
 
   final dynamic error;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Failed &&
-          runtimeType == other.runtimeType &&
-          error == other.error;
-
-  @override
-  int get hashCode => error.hashCode;
 }
 
 final class Succeeded extends Execution {

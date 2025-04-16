@@ -69,7 +69,7 @@ class AbsencesViewModel implements BaseViewModel<AbsencesState> {
     );
 
     result.when(
-      success: (absences) {
+      success: (_) {
         final currentPage = _absencesRepo.absences.sublist(
           _state.value.paginationIndex * Statics.paginationLimit,
           ((_state.value.paginationIndex + 1) * Statics.paginationLimit).clamp(
@@ -87,6 +87,10 @@ class AbsencesViewModel implements BaseViewModel<AbsencesState> {
   }
 
   Future<void> moveToPreviousPage() async {
+    if (_state.value.paginationIndex == 0) {
+      return;
+    }
+    
     _emit(execution: Executing());
 
     final index = (_state.value.paginationIndex - 1).clamp(
