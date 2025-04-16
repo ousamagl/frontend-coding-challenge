@@ -122,26 +122,29 @@ This is the core of the app. It allows users to:
 ### Getting Started
 
 #### Web
-
+```bash
 flutter config --enable-web
 flutter pub get
 flutter run -d chrome
+```
 
 #### Android
 
+```bash
 flutter pub get
 flutter run -d android
-
+```
 Ensure an emulator or physical device is connected.
 
 #### iOS
 
+```bash
 cd ios
 pod install
 cd ..
 flutter pub get
 flutter run -d ios
-
+```
 Open the project in Xcode and configure code signing if needed.
 
 ---
@@ -164,3 +167,4 @@ The Absence screen is covered with widget tests to verify:
 ### To run tests
 ```bash
 flutter test
+```
