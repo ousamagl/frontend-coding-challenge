@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:sickness_manager/app/core/common/enums.dart';
 
 part 'absence.g.dart';
 
@@ -39,6 +40,22 @@ class Absence extends Equatable {
   final String? memberNote;
   final String? type;
 
+  @JsonKey(includeFromJson: false)
+  AbsenceStatus? get status {
+    if (confirmedAt != null) {
+      return AbsenceStatus.confirmed;
+    } else if (rejectedAt != null) {
+      return AbsenceStatus.rejected;
+    } else {
+      return AbsenceStatus.requested;
+    }
+  }
+
+  @JsonKey(includeFromJson: false)
+  AbsenceType? get absenceType {
+    return AbsenceType.fromString(type ?? '');
+  }
+
   @override
   List<Object?> get props => [
     admitterId,
@@ -53,5 +70,6 @@ class Absence extends Equatable {
     startDate,
     type,
     userId,
+    status,
   ];
 }

@@ -1,3 +1,4 @@
+import 'package:sickness_manager/app/core/common/statics.dart';
 import 'package:sickness_manager/app/core/common/types/result.dart';
 import 'package:sickness_manager/app/domain/data_sources/auth_data_source.dart';
 import 'package:sickness_manager/app/domain/frameworks/storage.dart';
@@ -23,7 +24,7 @@ class UserRepoImpl implements UserRepo {
       success: (token) async {
         final token = result.valueOrNull;
 
-        await storage.saveString(tokenKey, token ?? '');
+        await storage.saveString(Statics.tokenKey, token ?? '');
 
         return Success(token);
       },
@@ -45,9 +46,7 @@ class UserRepoImpl implements UserRepo {
 
   @override
   Future<bool> isLoggedIn() async {
-    final token = await storage.getString(tokenKey);
+    final token = await storage.getString(Statics.tokenKey);
     return token != null && token.isNotEmpty;
   }
 }
-
-const tokenKey = 'access_token';

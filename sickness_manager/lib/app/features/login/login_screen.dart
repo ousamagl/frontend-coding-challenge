@@ -30,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    widget.viewModel.clear();
+    _viewModel.clear();
     _emailController.dispose();
     _passwordController.dispose();
     _emailFocusNode.dispose();

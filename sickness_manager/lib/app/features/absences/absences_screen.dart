@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sickness_manager/app/core/common/enums.dart';
 import 'package:sickness_manager/app/core/common/extensions/date_time_extensions.dart';
+import 'package:sickness_manager/app/core/common/extensions/string_extensions.dart';
+import 'package:sickness_manager/app/core/common/statics.dart';
 import 'package:sickness_manager/app/domain/models/absence.dart';
 import 'package:sickness_manager/app/features/absences/view_model/absences_state.dart';
 import 'package:sickness_manager/app/features/absences/view_model/absences_view_model.dart';
+import 'package:sickness_manager/app/features/absences/widgets/absence_status_widget.dart';
 import 'package:sickness_manager/app/presentation/presentation.dart';
 
 class AbsencesScreen extends StatefulWidget {
@@ -42,22 +46,10 @@ class _AbsencesScreenState extends State<AbsencesScreen> {
             bottom: false,
             child: Scaffold(
               backgroundColor: AppColors.secondary,
-              body: CustomScrollView(
-                slivers: [
-                  _appBar(),
-                  SliverToBoxAdapter(child: smSpacer()),
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) => _absenceItem(state.absences[index]),
-                      childCount: state.absences.length,
-                    ),
-                  ),
-                  SliverToBoxAdapter(child: xxxlSpacer()),
-                ],
-              ),
+              body: CustomScrollView(slivers: [_appBar(), ..._absencesList()]),
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.centerFloat,
-              floatingActionButton: _totalAbsences(),
+              floatingActionButton: _bottomBar(),
             ),
           ),
         );
@@ -68,7 +60,7 @@ class _AbsencesScreenState extends State<AbsencesScreen> {
   Widget _appBar() => SliverAppBar(
     title: Text(
       'Absences',
-      style: TextStyles.subtitle.copyWith(color: AppColors.white),
+      style: TextStyles.header.copyWith(color: AppColors.white),
     ),
     centerTitle: false,
     backgroundColor: AppColors.primary,
@@ -86,45 +78,35 @@ class _AbsencesScreenState extends State<AbsencesScreen> {
     floating: true,
   );
 
-  Widget _totalAbsences() => Padding(
-    padding: Paddings.horizontalSm,
-    child: Container(
-      width: double.infinity,
-      padding: Paddings.allXs,
-      decoration: BoxDecoration(
-        color: AppColors.primary,
-        borderRadius: BorderRadius.circular(Dimensions.xs),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Text(
-        'Total Absences: ${_state.absences.length}',
-        style: TextStyles.body.copyWith(color: AppColors.white),
+  List<Widget> _absencesList() => [
+    SliverToBoxAdapter(child: smSpacer()),
+    SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) =>
+            _state.execution.isExecuting
+                ? cardLoader()
+                : _absenceItem(_state.currentPage[index]),
+        childCount:
+            _state.execution.isExecuting ? 10 : _state.currentPage.length,
       ),
     ),
-  );
+    SliverToBoxAdapter(child: xxxlSpacer()),
+  ];
 
-  Widget _absenceItem(Absence absence) => Padding(
+  Widget _absenceItem(Absence? absence) => Padding(
     padding: EdgeInsets.symmetric(
       horizontal: Dimensions.sm,
       vertical: Dimensions.xxs,
     ),
     child: ListTile(
-      leading: Container(
-        width: 3,
-        decoration: BoxDecoration(color: AppColors.orange),
-      ),
+      key: ValueKey(absence?.id),
+      leading: _absenceTypeIndicator(absence),
       title: Text(
-        'Member name',
+        _viewModel.getMemberById(absence?.userId)?.name ?? 'Unknown',
         style: TextStyles.body.copyWith(fontWeight: FontWeight.w600),
       ),
-      subtitle: _absenceItemSubtitle(absence),
-      trailing: _absenceItemTrailing(absence),
+      subtitle: _absenceItemDetails(absence),
+      trailing: _absenceItemStatus(absence),
       tileColor: AppColors.white,
       minLeadingWidth: 0,
 
@@ -138,13 +120,24 @@ class _AbsencesScreenState extends State<AbsencesScreen> {
       onTap: () {
         context.pushNamed(
           'absence-details',
-          pathParameters: {'id': absence.id.toString()},
+          pathParameters: {'id': absence?.id.toString() ?? ''},
         );
       },
     ),
   );
 
-  Widget _absenceItemSubtitle(Absence absence) => Column(
+  Widget _absenceTypeIndicator(Absence? absence) => Container(
+    width: 3,
+    decoration: BoxDecoration(
+      color:
+          absence?.absenceType == AbsenceType.sickness
+              ? AppColors.yellow
+              : AppColors.green,
+      borderRadius: BorderRadius.circular(Dimensions.xs),
+    ),
+  );
+
+  Widget _absenceItemDetails(Absence? absence) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       xxsSpacer(),
@@ -157,40 +150,103 @@ class _AbsencesScreenState extends State<AbsencesScreen> {
           ),
           xsSpacer(),
           Text(
-            '${absence.startDate.toDayMonth()} - ${absence.endDate.toDayMonth()}',
+            '${absence?.startDate.toDayMonthYear()} - ${absence?.endDate.toDayMonthYear()}',
             style: TextStyles.caption.copyWith(color: AppColors.darkGrey),
           ),
         ],
       ),
-
       xxsSpacer(),
-      Text('Type: ${absence.type ?? 'Unknown'}'),
+      Text('Type: ${absence?.type?.capitalizeFirstLetter() ?? 'Unknown'}'),
     ],
   );
 
-  Widget _absenceItemTrailing(Absence absence) => Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: Dimensions.sm,
-          vertical: Dimensions.xs,
+  Widget _absenceItemStatus(Absence? absence) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        AbsenceStatusWidget(status: absence?.status),
+        xsSpacer(),
+        Icon(
+          FontAwesomeIcons.chevronRight,
+          size: Dimensions.sm,
+          color: AppColors.darkGrey,
         ),
-        decoration: BoxDecoration(
-          color: AppColors.orange.withAlpha(50),
-          borderRadius: BorderRadius.circular(Dimensions.md),
-          border: Border.all(color: AppColors.orange),
-        ),
-        child: Text(
-          'Requested',
-          style: TextStyles.footnote.copyWith(color: AppColors.orange),
-        ),
+      ],
+    );
+  }
+
+  Widget _bottomBar() => Padding(
+    padding: Paddings.horizontalSm,
+    child: Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(
+        horizontal: Dimensions.sm,
+        vertical: Dimensions.xs,
       ),
-      xsSpacer(),
-      Icon(
-        FontAwesomeIcons.chevronRight,
-        size: Dimensions.sm,
-        color: AppColors.darkGrey,
+      decoration: BoxDecoration(
+        color: AppColors.primary,
+        borderRadius: BorderRadius.circular(Dimensions.xs),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Total Absences: ${_state.absencesCount}',
+            style: TextStyles.body.copyWith(color: AppColors.white),
+          ),
+          _paginationControls(),
+        ],
+      ),
+    ),
+  );
+
+  Widget _paginationControls() => Row(
+    children: [
+      InkWell(
+        child: Icon(
+          FontAwesomeIcons.chevronLeft,
+          size: Dimensions.sm,
+          color:
+              _state.paginationIndex == 0
+                  ? AppColors.lightGrey
+                  : AppColors.white,
+        ),
+        onTap: () {
+          if (_state.paginationIndex > 0) {
+            _viewModel.moveToPreviousPage();
+          }
+        },
+
+        onDoubleTap: () {},
+      ),
+      lgSpacer(),
+      InkWell(
+        child: Icon(
+          FontAwesomeIcons.chevronRight,
+          size: Dimensions.sm,
+          color:
+              (_state.paginationIndex * Statics.paginationLimit >=
+                          _state.absencesCount ||
+                      _state.currentPage.length < Statics.paginationLimit)
+                  ? AppColors.lightGrey
+                  : AppColors.white,
+        ),
+        onTap: () {
+          if (!(_state.paginationIndex * Statics.paginationLimit >=
+                  _state.absencesCount ||
+              _state.currentPage.length < Statics.paginationLimit)) {
+            _viewModel.moveToNextPage();
+          }
+        },
+
+        onDoubleTap: () {},
       ),
     ],
   );

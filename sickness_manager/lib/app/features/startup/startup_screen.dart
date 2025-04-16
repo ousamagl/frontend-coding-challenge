@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sickness_manager/app/features/startup/view_model/startup_state.dart';
 import 'package:sickness_manager/app/features/startup/view_model/startup_view_model.dart';
-import 'package:sickness_manager/app/presentation/components/loading.dart';
 import 'package:sickness_manager/app/presentation/presentation.dart';
 
 class StartupScreen extends StatefulWidget {
@@ -15,8 +14,6 @@ class StartupScreen extends StatefulWidget {
 
 class _StartupScreenState extends State<StartupScreen> {
   StartupViewModel get _viewModel => widget.viewModel;
-
-  StartupState get _state => _viewModel.state.value;
 
   @override
   void initState() {

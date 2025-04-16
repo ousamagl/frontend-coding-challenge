@@ -17,14 +17,17 @@ final absencesViewModelProvider = Provider.autoDispose<AbsencesViewModel>((
 
 final loginViewModelProvider = Provider.autoDispose<LoginViewModel>((ref) {
   final userRepo = ref.watch(userRepoProvider);
+  final absencesRepo = ref.watch(absencesRepoProvider);
+
   final appRouter = ref.watch(appRouterProvider);
 
-  return LoginViewModel(appRouter, userRepo);
+  return LoginViewModel(appRouter, userRepo, absencesRepo);
 });
 
 final startupViewModel = Provider.autoDispose<StartupViewModel>((ref) {
   final userRepo = ref.watch(userRepoProvider);
+  final absencesRepo = ref.watch(absencesRepoProvider);
   final appRouter = ref.watch(appRouterProvider);
 
-  return StartupViewModel(appRouter, userRepo);
+  return StartupViewModel(appRouter, userRepo, absencesRepo);
 });

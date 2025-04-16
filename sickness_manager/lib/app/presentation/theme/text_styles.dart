@@ -16,6 +16,12 @@ class TextStyles {
     color: Colors.black,
   );
 
+   static const TextStyle header = TextStyle(
+    fontSize: Dimensions.xmd,
+    fontWeight: FontWeight.w500,
+    color: Colors.black,
+  );
+
   static const TextStyle body = TextStyle(
     fontSize: Dimensions.sm,
     fontWeight: FontWeight.w500,

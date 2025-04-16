@@ -6,5 +6,9 @@ class Statics {
 
   static final String loginApi = '$_baseURL/login';
   static final String absencesApi = '$_baseURL/absences';
+  static final String absencesCountApi = '$_baseURL/total-absences';
   static final String membersApi = '$_baseURL/members';
+
+  static final String tokenKey = 'access_token';
+  static final int paginationLimit = 10;
 }

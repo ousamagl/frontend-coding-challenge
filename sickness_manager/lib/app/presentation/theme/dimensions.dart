@@ -14,6 +14,9 @@ class Dimensions {
   /// 16
   static const sm = _base * 2;
 
+  /// 20
+  static const xmd = _base * 2.5;
+
   /// 24
   static const md = _base * 3;
 

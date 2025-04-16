@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sickness_manager/app/presentation/components/loading.dart';
 import 'package:sickness_manager/app/presentation/presentation.dart';
 
 Widget primaryFilledButton(
@@ -30,5 +29,30 @@ Widget primaryFilledButton(
                 color: textColor ?? AppColors.black,
               ),
             ),
+  ),
+);
+
+Widget primaryOutlinedButton(
+  String text, {
+  VoidCallback? onPressed,
+  Color? color,
+  Color? textColor,
+  double? width,
+}) => SizedBox(
+  width: width ?? double.infinity,
+  child: OutlinedButton(
+    onPressed: onPressed,
+    style: OutlinedButton.styleFrom(
+      padding: const EdgeInsets.symmetric(vertical: Dimensions.sm - 2),
+      backgroundColor: AppColors.white,
+      side: BorderSide(color: color ?? AppColors.orange),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Dimensions.xs),
+      ),
+    ),
+    child: Text(
+      text,
+      style: TextStyles.body.copyWith(color: textColor ?? AppColors.orange),
+    ),
   ),
 );
