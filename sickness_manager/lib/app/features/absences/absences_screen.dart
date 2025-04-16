@@ -25,6 +25,8 @@ class _AbsencesScreenState extends State<AbsencesScreen> {
 
   AbsencesState get _state => _viewModel.state.value;
 
+  final _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -32,6 +34,7 @@ class _AbsencesScreenState extends State<AbsencesScreen> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -50,6 +53,7 @@ class _AbsencesScreenState extends State<AbsencesScreen> {
                   _state.execution.isFailed
                       ? _errorWidget()
                       : CustomScrollView(
+                        controller: _scrollController,
                         slivers: [_appBar(), ..._absencesList()],
                       ),
               floatingActionButtonLocation:
@@ -241,6 +245,11 @@ class _AbsencesScreenState extends State<AbsencesScreen> {
         ),
         onTap: () {
           if (_state.paginationIndex > 0) {
+            _scrollController.animateTo(
+              0,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeIn,
+            );
             _viewModel.moveToPreviousPage();
           }
         },
@@ -263,6 +272,11 @@ class _AbsencesScreenState extends State<AbsencesScreen> {
           if (!(_state.paginationIndex * Statics.paginationLimit >=
                   _state.absencesCount ||
               _state.currentPage.length < Statics.paginationLimit)) {
+            _scrollController.animateTo(
+              0,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeIn,
+            );
             _viewModel.moveToNextPage();
           }
         },
