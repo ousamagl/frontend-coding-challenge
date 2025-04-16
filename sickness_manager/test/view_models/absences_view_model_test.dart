@@ -8,8 +8,8 @@ import 'package:sickness_manager/app/domain/models/absence.dart';
 import 'package:sickness_manager/app/features/absences/view_model/absences_state.dart';
 import 'package:sickness_manager/app/features/absences/view_model/absences_view_model.dart';
 
-import '../mocks/outputs.mocks.mocks.dart';
-import '../mocks/repositories.mocks.mocks.dart';
+import '../mocks/outputs.mocks.dart';
+import '../mocks/repositories.mocks.dart';
 
 void main() {
   final arranger = _Arranger();

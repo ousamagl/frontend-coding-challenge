@@ -31,6 +31,7 @@ Widget inlineLoader() => SizedBox(
 );
 
 Widget cardLoader() => SizedBox(
+  key: const Key('cardLoader'),
   height: 1.25 * Dimensions.xxl,
   child: Shimmer.fromColors(
     baseColor: AppColors.lightGrey.withValues(alpha: 0.4),

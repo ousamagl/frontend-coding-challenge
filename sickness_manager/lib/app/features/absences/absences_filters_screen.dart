@@ -111,6 +111,7 @@ class _AbsencesFilterScreenState extends State<AbsencesFilterScreen> {
     titleSpacing: Dimensions.xs,
     actions: [
       IconButton(
+        key: const Key('logoutButton'),
         icon: const FaIcon(FontAwesomeIcons.userSlash, color: AppColors.white),
         onPressed: () => _viewModel.logout(),
       ),

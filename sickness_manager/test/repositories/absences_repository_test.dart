@@ -8,7 +8,7 @@ import 'package:sickness_manager/app/domain/models/absence.dart';
 import 'package:sickness_manager/app/domain/models/member.dart';
 import 'package:sickness_manager/app/domain/repositories/absences_repo.dart';
 
-import '../mocks/data_sources.mocks.mocks.dart';
+import '../mocks/data_sources.mocks.dart';
 
 void main() {
   final arranger = _Arranger();
