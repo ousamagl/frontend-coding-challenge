@@ -1,5 +1,11 @@
 # Absence Manager
 
+![Flutter](https://img.shields.io/badge/Flutter-02569B?logo=flutter&logoColor=white)
+![Dart](https://img.shields.io/badge/Dart-0175C2?logo=dart&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
+![Heroku](https://img.shields.io/badge/Deployed%20on-Heroku-430098?logo=heroku&logoColor=white)
+
 A full-stack application for managing employee absences. Built with Flutter and FastAPI.
 
 👉 **[Watch the Demo](https://drive.google.com/file/d/1GL8ut_fExk1XxhpiZsVaKShKJrAuIlH3/view?usp=sharing)**
