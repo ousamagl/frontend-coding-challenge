@@ -1,90 +1,166 @@
-<p align="center">
-  <img src="https://crewmeister.com/images/logo_crewmeister_without_text.svg" />
-</p>
+# Absence Manager
 
-# 🚀 Crewmeister coding challenge - Frontend (Flutter)
+A full-stack application for managing employee absences. Built with Flutter and FastAPI.
 
-Hello and thanks in participating in the crewmeister coding challenge. This coding exercise will help us get a better feeling about your coding process.
+👉 **[Watch the Demo](https://drive.google.com/file/d/1GL8ut_fExk1XxhpiZsVaKShKJrAuIlH3/view?usp=sharing)**
 
-If you have any questions, we're happy to help you. Reach the devs at challenge@crewmeister.com.
+---
 
-## Context
+## Project Structure
 
-At Crewmeister we like to work closely with our clients, listening to their demands and developing solutions for their problems. One of the most requested features is a way for company owners to manage sickness and vacations of employees.
+- `sickness_manager/` – Flutter app
+- `api/` – FastAPI backend (deployed to Heroku)
 
-We decided to implement this feature for our clients and we are calling it the Absence Manager.
+## Backend (FastAPI)
 
-## Product Requirements
+This project includes a lightweight REST API built using **Python** and **FastAPI**, deployed on **Heroku**. It powers the mobile app by providing user authentication and absence-related data.
 
-- [ ] I want to see a list of absences including the names of the employees.
-- [ ] I want to see the first 10 absences, with the ability to paginate.
-- [ ] I want to see a total number of absences.
-- [ ] For each absence I want to see:
-  - [ ] Member name
-  - [ ] Type of absence
-  - [ ] Period
-  - [ ] Member note (when available)
-  - [ ] Status (can be 'Requested', 'Confirmed' or 'Rejected')
-  - [ ] Admitter note (when available)
-- [ ] I want to filter absences by type.
-- [ ] I want to filter absences by date.
-- [ ] I want to see a loading state until the list is available.
-- [ ] I want to see an error state if the list is unavailable.
-- [ ] I want to see an empty state if there are no results.
-- [ ] (Bonus) I can generate an iCal file and import it into outlook.
+API documentation is available here:  
+[https://absence-manager-api-6c43055a2bde.herokuapp.com/docs](https://absence-manager-api-6c43055a2bde.herokuapp.com/docs)
 
-## Your Mission
+### Overview
 
-Create the Flutter application that satisfies all must-have requirements above, plus any nice-to-have requirements you wish to include.
+The API provides four endpoints:
 
-We provided a couple of JSON files with the mock data necessary to implement the screens, you can use the files straight into the app using the mock methods provided in this repository or create a small separate API (bonus), it's your choice.
+| Method | Endpoint          | Description                                 |
+|--------|-------------------|---------------------------------------------|
+| POST   | `/login`          | Authenticates the user and returns a token  |
+| GET    | `/members`        | Returns a list of team members              |
+| GET    | `/absences`       | Returns a paginated list of absences        |
+| GET    | `/total-absences` | Returns the total number of absences        |
 
-We encourage you to use your favorite tools and packages to build a solid Flutter application.
+### Authentication
 
-Optional: build the project and deploy (ie make it available as a static project) on Github Pages, otherwise please provide detailed instructions on how to start the project locally.
+- The `/login` endpoint returns a **JWT access token**.
+- This token must be included in the `Authorization` header (`Bearer <token>`) for all other endpoints.
 
-## Tech Requirements
+### Design Decisions
 
-- Flutter
-- Tests: flutter_test library
-- Code Linter
-- Using a state management approach (BLoC, Redux etc) is a plus.
+- The API reads from **JSON files** instead of using a database.
+- This approach was chosen to simplify setup and avoid infrastructure overhead during the challenge.
+- Data is structured in a way that simulates realistic usage (filtering, pagination, etc).
 
-## Instructions
+### Filtering Absences
 
-- Clone this repo.
-- The challenge is on!
-- Build a performant, clean and well-structured solution.
-- Commit early and often. We want to be able to check your progress.
-- Include a README with instructions on how to run your project.
-- Please complete your working solution within 7 days of receiving this challenge.
-- Whenever you're done please deliver the project following the instructions below.
+The `/absences` endpoint supports the following filters:
 
-We'll review your submission as soon as possible. Key-points we're going to review:
+- `user_id`: Member ID
+- `crew_id`: Crew ID
+- `type`: `"vacation"` or `"sick leave"`
+- `status`: `"requested"`, `"rejected"`, `"confirmed"`
+- `start_date`, `end_date`: Format `YYYY-MM-DD`
 
-- Naming (files, functions, widgets, ...).
-- Tests.
-- Code structure, readability, performance and consistency.
-- function and widget lengths.
-- Commits + commit messages.
-- Clean code.
-- Good documentation and README instructions.
+Filters can be combined, and pagination is supported with:
 
-An essential part of the challenge is also coming up with your own solutions and making reasonable assumptions about the implementation of the acceptance criteria.
+- `skip`: Offset for pagination
+- `limit`: Maximum number of results
 
-## Project delivery instructions
+#### Date Filtering Logic
 
-To submit the project for evaluation please follow the steps below:
+- If only `start_date` or `end_date` is provided, the API returns **absences with an exact match**.
+- If both are provided, the API returns **absences within the specified date interval**.
 
-- Create a **public** repo on your personal Github.
-- Add the new repo as a _remote_ on your local repo.
-- Push your code to your new remote repo.
-- Provide the link to your GitHub repository in the Greenhouse submission form.
-- Submit your completed project via the Greenhouse link in the email received from the Recruitment Manager.
+## Flutter App
 
+The Flutter app lives in the `sickness_manager/` folder. The API is located in the `api/` folder.
 
-## That's it!
+This Flutter application is built with a focus on clean architecture, modularity, and testability. It follows a **feature-first structure**, centered around domain entities and designed with **TDD** and **dependency injection** in mind.
 
-Happy coding!
+The app is fully connected to a live API — no additional backend setup is required.  
+You can log in using the following credentials:
 
-<img src="https://user-images.githubusercontent.com/5693916/30273942-84252588-96fb-11e7-9420-5516b92cb1f7.gif" data-canonical-src="https://user-images.githubusercontent.com/5693916/30273942-84252588-96fb-11e7-9420-5516b92cb1f7.gif" width="150" height="150" />
+- **Email:** `admin@crewmeister.com`
+- **Password:** `admin123`
+
+---
+
+### Features
+
+The app is structured into three main features:
+
+#### 1. Login
+
+- Authenticates the user using the `/login` endpoint.
+- Stores the JWT access token securely for authenticated requests.
+- Redirects the user to the Absences feature after login.
+
+#### 2. Startup
+
+- Initializes the app.
+- Verifies the presence of a valid JWT token.
+- Handles redirection between login and absence flow.
+
+#### 3. Absence Management
+
+This is the core of the app. It allows users to:
+
+- Fetch a **paginated list** of absences
+- Apply **multiple filters**:
+  - Absence type (`vacation`, `sick leave`)
+  - Status (`requested`, `confirmed`, `rejected`)
+  - Member ID, Crew ID
+  - Date range (`start_date`, `end_date`)
+- View **detailed information** for each absence, including:
+  - Member name and notes
+  - Admitter notes (if present)
+  - Period and status
+- Export an absence as an **`.ics` iCal file**, which can be imported into Outlook, Google Calendar, or other calendar applications
+
+---
+
+### Architecture & Design Principles
+
+- **Feature-first structure**: Each feature is fully isolated and unaware of the others.
+- **Pure Dart ViewModels**: Business logic is managed using `ValueNotifier<T>`, with `immutable` state classes and a functional programming paradigm.
+- **Unidirectional data flow**: Data flows from framework → repository → feature → viewmodel → UI.
+- **Dependency Injection with Riverpod**: All dependencies (ViewModels, Repos, Data Sources) are registered using Riverpod providers.
+- **Navigation via output contracts**: Each feature defines abstract output interfaces for navigation. The app router (based on GoRouter) implements those interfaces, achieving complete routing inversion.
+- **Modularity**: Features are injected via "modules" that encapsulate all logic, providers, and dependencies needed for the feature to function independently.
+
+---
+
+### Getting Started
+
+#### Web
+
+flutter config --enable-web
+flutter pub get
+flutter run -d chrome
+
+#### Android
+
+flutter pub get
+flutter run -d android
+
+Ensure an emulator or physical device is connected.
+
+#### iOS
+
+cd ios
+pod install
+cd ..
+flutter pub get
+flutter run -d ios
+
+Open the project in Xcode and configure code signing if needed.
+
+---
+
+## Testing
+The app includes both unit and widget testing.
+
+### Unit Tests
+- `AbsenceRepository`
+- `AbsenceViewModel`
+
+These are tested in isolation to ensure data transformations and logic are correct.
+
+### Widget Tests
+The Absence screen is covered with widget tests to verify:
+- Loading and error states
+- List rendering
+- Button interactions (e.g., logout, filter)
+
+### To run tests
+```bash
+flutter test
